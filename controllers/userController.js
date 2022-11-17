@@ -1,5 +1,6 @@
-const User = require('../models/userModel');
+const jwt = require('jsonwebtoken');
 const catchAsync = require('../utils/catchAsync');
+const User = require('../models/userModel');
 
 exports.createUser = catchAsync(async (req, res, next) => {
   const { username, password, typeOfUser } = req.body;
@@ -8,5 +9,33 @@ exports.createUser = catchAsync(async (req, res, next) => {
   res.status(201).json({
     status: 'success',
     message: 'User created successfully!',
+  });
+});
+
+exports.login = catchAsync(async (req, res, next) => {
+  const { username, password } = req.body;
+  if (!username || !password) {
+    return next(new AppError('Please provide username and password', 400));
+  }
+
+  const user = await User.findOne({ username }).select('+password');
+  if (!user) {
+    return next(new AppError('Invalid username or password!', 401));
+  }
+
+  const passwordIsValid = await user.correctPassword(password, user.password);
+  if (!user || !passwordIsValid) {
+    return next(new AppError('Invalid username or password', 401));
+  }
+
+  const accessToken = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
+    expiresIn: process.env.JWT_EXPIRES_IN,
+  });
+
+  user.password = undefined;
+  res.status(200).json({
+    status: 'success',
+    user,
+    accessToken,
   });
 });
