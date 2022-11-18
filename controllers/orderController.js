@@ -43,7 +43,11 @@ exports.createOrder = catchAsync(async (req, res, next) => {
     return next(new AppError('This catalog contains no products now!', 404));
   }
 
-  await Order.create({ products: catalog.products, buyer: req.user._id });
+  await Order.create({
+    products: catalog.products,
+    buyer: req.user._id,
+    seller: req.params.seller_id,
+  });
 
   res.status(201).json({
     status: 'success',

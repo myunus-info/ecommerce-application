@@ -18,6 +18,11 @@ const orderSchema = new mongoose.Schema({
     ref: 'User',
     required: [true, 'Buyer Id is a required field!'],
   },
+  seller: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: [true, 'Seller Id is a required field!'],
+  },
 });
 
 module.exports = mongoose.model('Order', orderSchema);
