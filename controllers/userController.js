@@ -5,6 +5,10 @@ const User = require('../models/userModel');
 
 exports.register = catchAsync(async (req, res, next) => {
   const { username, password, typeOfUser } = req.body;
+  const user = await User.findOne({ username });
+  if (user) {
+    return next(new AppError('The user already exists!', 401));
+  }
   await User.create({ username, password, typeOfUser });
 
   res.status(201).json({
