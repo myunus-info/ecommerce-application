@@ -10,6 +10,7 @@ process.on('uncaughtException', err => {
   process.exit(1); // Crashing the app is mandatory Bcz the app remains at unclean stage;
 });
 
+// Database connection
 const DB = process.env.DATABASE.replace('<PASSWORD>', process.env.DB_PASS);
 const port = process.env.PORT || 5000;
 

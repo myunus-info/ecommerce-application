@@ -1,8 +1,9 @@
 const jwt = require('jsonwebtoken');
 const catchAsync = require('../utils/catchAsync');
+const AppError = require('../utils/appError');
 const User = require('../models/userModel');
 
-exports.createUser = catchAsync(async (req, res, next) => {
+exports.register = catchAsync(async (req, res, next) => {
   const { username, password, typeOfUser } = req.body;
   await User.create({ username, password, typeOfUser });
 
@@ -17,17 +18,14 @@ exports.login = catchAsync(async (req, res, next) => {
   if (!username || !password) {
     return next(new AppError('Please provide username and password', 400));
   }
-
   const user = await User.findOne({ username }).select('+password');
   if (!user) {
     return next(new AppError('Invalid username or password!', 401));
   }
-
   const passwordIsValid = await user.correctPassword(password, user.password);
-  if (!user || !passwordIsValid) {
+  if (!passwordIsValid) {
     return next(new AppError('Invalid username or password', 401));
   }
-
   const accessToken = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRES_IN,
   });
