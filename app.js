@@ -7,6 +7,7 @@ const globalErrorHandler = require('./utils/errorHandlers');
 
 const userRoutes = require('./routers/userRouter');
 const catalogRoutes = require('./routers/catalogRouter');
+const orderRoutes = require('./routers/orderRouter');
 
 // Development logging
 if (process.env.NODE_ENV === 'development') {
@@ -18,6 +19,7 @@ app.use(express.json());
 
 app.use('/api/auth', userRoutes);
 app.use('/api/seller', catalogRoutes);
+app.use('/api/buyer', orderRoutes);
 
 // Routing errors
 app.all('*', (req, res, next) => {
