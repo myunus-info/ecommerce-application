@@ -5,7 +5,7 @@ const Order = require('../models/orderModel');
 
 exports.createCatalog = catchAsync(async (req, res, next) => {
   if (req.user.typeOfUser !== 'seller') {
-    return next(new AppError('You are not allowed to create products catalog!', 403));
+    return next(new AppError('Only sellers are allowed to create products catalog!', 403));
   }
 
   const productsCatalog = await Catalog.findOne({ seller: req.user._id });
